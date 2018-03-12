@@ -40,3 +40,22 @@ def test_iterate_ras():
     test = abs(iterate_ras(mat, row_sum, col_sum) - np.asarray([[0, 0], [30, 70]])) < 1e-6
     assert test.all()
 
+
+def balance_bridge(bridge_initial, row_sum, col_sum, threshold=1e-6, iter_max=10000):
+    bridge_prev = bridge_initial
+    for i in range(iter_max):
+        b = iterate_ras(bridge_prev, row_sum, col_sum)
+        diff = abs(b - bridge_prev) < threshold
+        if diff.all():
+            break
+        else:
+            bridge_prev = b
+    return b
+
+
+def test_balance_bridge():
+    mat = np.arange(6).reshape((2, 3))
+    row_sum = np.asarray([50., 50.])
+    col_sum = np.asarray([50., 75., 0.])
+    test = abs(balance_bridge(mat, row_sum, col_sum) - np.asarray([[0., 50., 0.], [25., 25., 0.]])) < 1e-6
+    assert test.all()
